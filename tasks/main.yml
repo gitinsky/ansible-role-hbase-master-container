@@ -1,0 +1,8 @@
+- name: check if a hbase-master container is started
+  command: bash -c "docker ps | grep hbase-master"
+  ignore_errors: True
+  register: result
+
+- name: start an hbase-master container
+  command: docker run -d -h {{ ansible_hostname }}  --dns {{ ansible_docker0.ipv4.address }} --dns 8.8.8.8 --dns-search node.dc1.consul -p={{ hbase_regionserver_port }}:{{ hbase_regionserver_port }} -p=16030:16030  -p={{ hbase_master_info_port }}:{{ hbase_master_info_port }} -v {{ ext_hadoop_conf_volume }}:/hbase/conf -name hbase-master gitinsky/hbase-master:0.1.0
+  when: result|failed
