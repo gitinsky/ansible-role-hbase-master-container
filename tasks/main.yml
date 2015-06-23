@@ -4,7 +4,19 @@
   register: result
 
 - name: start an hbase-master container
-  command: docker run -d {% if docker_net_false|default(False) %} -n=false -v {{ ext_hadoop_conf_volume }}/hosts:/etc/hosts {% endif %} -h {{ ansible_hostname }}{% if docker_net_false|default(False) %}-mn{% endif %} --dns {{ ansible_docker0.ipv4.address }} --dns {{ docker_dns_2 }} --dns-search node.dc1.consul -p={{ hbase_regionserver_port }}:{{ hbase_regionserver_port }} -p=16030:16030  -p={{ hbase_master_info_port }}:{{ hbase_master_info_port }} -v {{ ext_hadoop_conf_volume }}:/hbase/conf -name hbase-master gitinsky/hbase-master:0.1.1
+  command: docker run
+            -d {% if docker_net_false|default(False) %}
+              -n=false -v {{ ext_hadoop_conf_volume }}/hosts:/etc/hosts
+            {% endif %}
+            -h {{ ansible_hostname }}{% if docker_net_false|default(False) %}-mn{% endif %}
+            --dns {{ ansible_docker0.ipv4.address }}
+            --dns {{ docker_dns_2 }}
+            --dns-search node.dc1.consul
+            -p={{ hbase_regionserver_port }}:{{ hbase_regionserver_port }}
+            -p=16030:16030
+            -p={{ hbase_master_info_port }}:{{ hbase_master_info_port }}
+            -v {{ ext_hadoop_conf_volume }}:/hbase/conf
+            -name hbase-master gitinsky/hbase-master:0.1.1
   register: docker_id
   when: result|failed
 
